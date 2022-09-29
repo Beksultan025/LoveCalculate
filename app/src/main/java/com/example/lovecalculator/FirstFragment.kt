@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.lovecalculator.databinding.FragmentFirstBinding
 import com.example.lovecalculator.model.App
@@ -20,6 +22,7 @@ import retrofit2.Response
 class FirstFragment : Fragment() {
 
     lateinit var binding: FragmentFirstBinding
+    private val viewModel: LoveViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +40,14 @@ class FirstFragment : Fragment() {
 
     private fun initClicker() {
         binding.btn.setOnClickListener {
-            App.api.calculateLove(
+            viewModel.getLoveModel(
+                binding.firstEt.text.toString(),
+                binding.secondEt.text.toString()
+            ).observe(viewLifecycleOwner,
+                Observer {
+                    binding.btn.text = it.percentage
+                })
+            /*App.api.calculateLove(
                 binding.firstEt.text.toString(),
                 binding.secondEt.text.toString()
             ).enqueue(object : Callback<LoveModel> {
@@ -51,14 +61,15 @@ class FirstFragment : Fragment() {
 
                         findNavController().navigate(R.id.action_homeFragment_to_secondFragment , bundle)
                     }
-                }
+        }
+
 
                 override fun onFailure(call: Call<LoveModel>, t: Throwable) {
 
                     Log.e("lol", "onFailure: ${t.message}" )
                 }
 
-            })
+            })*/
         }
     }
 
